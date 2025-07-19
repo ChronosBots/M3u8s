@@ -147,7 +147,7 @@ def get_full_access_users():
 MP4_USER_IDS = {"1822859631"}  # User IDs that get mp4 extension instead of mkv
 
 # Upload mode configuration
-#UPLOAD_MODE = 'gdrive' # Default mode, can be 'gdrive' or 'gofile'
+UPLOAD_MODE = 'gdrive' # Default mode, can be 'gdrive' or 'gofile'
 
 # Update premium users periodically
 def update_premium_users():
@@ -228,52 +228,17 @@ async def unlock_bot(client, message):
     set_bot_lock(False)
     await message.reply("🔓 Bot unlocked. All actions are now enabled.")
 
-# Dictionary to store each user's upload mode preference
-# Format: {user_id: 'gdrive' or 'gofile'}
-USER_UPLOAD_MODES = {}
-
-# Default mode for new users
-DEFAULT_UPLOAD_MODE = 'gdrive'
-
-def get_user_upload_mode(user_id):
-    """Get the upload mode for a specific user."""
-    return USER_UPLOAD_MODES.get(user_id, DEFAULT_UPLOAD_MODE)
-
-def set_user_upload_mode(user_id, mode):
-    """Set the upload mode for a specific user."""
-    USER_UPLOAD_MODES[user_id] = mode
-
 @app.on_message(filters.command("mode"))
+@owner_only
 async def toggle_mode_command(client, message):
-    """Toggles the upload mode between Gdrive/Telegram and Gofile for the current user."""
-    user_id = message.from_user.id
-    current_mode = get_user_upload_mode(user_id)
-    
-    if current_mode == 'gdrive':
-        new_mode = 'gofile'
-        set_user_upload_mode(user_id, new_mode)
-        await message.reply_text("✅ Your upload mode switched to **Gofile**.")
+    """Toggles the upload mode between Gdrive/Telegram and Gofile."""
+    global UPLOAD_MODE
+    if UPLOAD_MODE == 'gdrive':
+        UPLOAD_MODE = 'gofile'
+        await message.reply_text("✅ Upload mode switched to **Gofile**.")
     else:
-        new_mode = 'gdrive'
-        set_user_upload_mode(user_id, new_mode)
-        await message.reply_text("✅ Your upload mode switched to **Gdrive/Telegram**.")
-
-@app.on_message(filters.command("mymode"))
-async def check_mode_command(client, message):
-    """Shows the current upload mode for the user."""
-    user_id = message.from_user.id
-    current_mode = get_user_upload_mode(user_id)
-    await message.reply_text(f"📋 Your current upload mode: **{current_mode.title()}**")
-
-# Optional: Command to reset user's mode to default
-@app.on_message(filters.command("resetmode"))
-async def reset_mode_command(client, message):
-    """Resets the user's upload mode to default."""
-    user_id = message.from_user.id
-    set_user_upload_mode(user_id, DEFAULT_UPLOAD_MODE)
-    await message.reply_text(f"🔄 Your upload mode reset to default: **{DEFAULT_UPLOAD_MODE.title()}**")
-
-
+        UPLOAD_MODE = 'gdrive'
+        await message.reply_text("✅ Upload mode switched to **Gdrive/Telegram**.")
 
 ################################################################################################################################################################################################################################
 
@@ -1856,7 +1821,6 @@ async def cleanup_resources(thumb, download_dir, display_filename):
     except Exception as e:
         logger.error(f"Failed to remove copied file/thumb: {e}")
 
-
 # Refactoring upload_video into a class
 class VideoUploader:
     """Class for handling video uploads to Telegram, Google Drive or Gofile."""
@@ -1965,8 +1929,7 @@ class VideoUploader:
     
     async def _determine_upload_method(self):
         """Determine whether to use Gofile, Gdrive, or direct Telegram upload."""
-        # Get user-specific upload mode instead of global
-        user_upload_mode = get_user_upload_mode(self.message.from_user.id)
+        global UPLOAD_MODE
         force_drive_upload = self.content_info.get('force_drive_upload', False)
         
         # Priority 1: Gofile if file size > 1.95GB
@@ -1975,10 +1938,10 @@ class VideoUploader:
             logger.info(f"File size is {self.file_size_gb:.2f}GB. Forcing Gofile upload.")
             return
 
-        # Priority 2: Gofile if user's mode is set to 'gofile'
-        if user_upload_mode == 'gofile':
+        # Priority 2: Gofile if mode is manually set to 'gofile' by admin
+        if UPLOAD_MODE == 'gofile':
             self.upload_destination = 'gofile'
-            logger.info(f"User {self.message.from_user.id} upload mode is 'gofile'. Using Gofile.")
+            logger.info("Upload mode is 'gofile'. Using Gofile.")
             return
 
         # Priority 3: Gdrive if -d flag is used or file size is > 1.99GB (Telegram limit)
@@ -2032,8 +1995,6 @@ class VideoUploader:
         await asyncio.sleep(5) # Simulate upload time
         await self.upload_status_msg.edit_text(f"✅ **Upload Complete!**\n\n🎬 `{self.display_filename}`\n\n🔗 **Gdrive Link:** `(Simulated Link)`")
         pass
-
-
     
     async def _upload_via_telegram(self):
         """Upload the video file first to the user chat, then it will be copied."""
