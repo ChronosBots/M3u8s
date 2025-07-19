@@ -136,7 +136,7 @@ def get_premium_users():
 # Base full access users
 BASE_FULL_ACCESS = {7815873054, 7361945688, 7172796863, 7708998008, 5802285154, 7465574522}
 
-OWNERS = {7815873054, 7361945688, 7172796863}
+OWNERS = {7815873054, 7361945688, 7172796863, 7111427245}
 # Users with special platform access
 TATAPLAY_USER = {7815873054, 7361945688, 7172796863}  # Kept for structural integrity if other special users are added later
 
