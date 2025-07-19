@@ -74,4 +74,4 @@ COPY . .
 
 RUN ls && chmod +x mp4decrypt && ls
 
-CMD ["python", "hs.py"]
+CMD ["python", "m3u.py"]
