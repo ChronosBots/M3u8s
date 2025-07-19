@@ -5,11 +5,11 @@ PROXY_FIRST = True
 # Proxy Configuration
 PROXY_USERNAME = "paypalmafiabots"
 PROXY_PASSWORD = "Aryan"
-PROXY_HOST = "103.171.50.6"
+PROXY_HOST = "103.172.84.222"
 PROXY_PORT = 50100
 
 
-
+#https://paypalmafiabots:Aryan@103.172.84.222:50100
 
 # http://nx1botz0zIn6:sVF4DJXFt8@103.167.32.218:49155
 # http://paypalmafiabots:TeamUniverse@103.235.64.29:50100
