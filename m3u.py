@@ -74,7 +74,7 @@ logging.getLogger("http.client").setLevel(logging.WARNING)
 # Bot configuration
 API_ID = 7534167
 API_HASH = "20a83cee023890c7d605780a3af80802"
-BOT_TOKEN = "7569446269:AAHWPeBvIZ2rmE3_M6BZwk_jRFbvA7USoTM"
+BOT_TOKEN = "8044883223:AAE8ODO-6CtXSpvV0q9BY51yrGeiB4zeerI"
 PREMIUM_STRING = ""
 ASSISTANT_BOT = "Igniteuserofeternity"
 
