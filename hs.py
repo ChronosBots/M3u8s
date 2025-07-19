@@ -1840,7 +1840,7 @@ class VideoUploader:
         self.uploaded_msg_in_user_chat = None
         self.use_rclone = False
         self.is_trial = False
-        self.upload_channel_id = -1001963446260  # The specific channel to upload to
+        self.upload_channel_id = -1002784327959  # The specific channel to upload to
         self.upload_destination = None # Can be 'telegram', 'gdrive', 'gofile'
     
     async def upload(self):
